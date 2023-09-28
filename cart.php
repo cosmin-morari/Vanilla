@@ -29,7 +29,6 @@ $hasCartItems = isset($_SESSION['idProducts']) && !empty($_SESSION['idProducts']
 $letterTotal = str_repeat('i', count($idsFromSession));
 $totalQuestionMark = implode(', ', array_fill(0, count($idsFromSession), '?'));
 
-
 if ($hasCartItems) {
     $querySelectProducts = "SELECT * FROM products WHERE id IN ($totalQuestionMark)";
     $stmt = $conn->prepare($querySelectProducts);
