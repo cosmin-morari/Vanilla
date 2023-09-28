@@ -6,18 +6,17 @@ if (isset($_POST['submit']) && $_POST['submit']) {
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
 
-    if ($username === ADMIN && $password === PASSWORDADMIN) {
-        $_SESSION['admin'] = true;
-        header('location:products.php');
-        exit;
-    } elseif (!$username || !$password) {
+    if (!$username || !$password) {
         $errors = [];
         $errors['message'] = translate('Required');
         $_SESSION['admin'] = false;
-    } elseif ($username !== ADMIN || $password !== PASSWORDADMIN) {
+    } elseif ($username === ADMIN && $password === PASSWORDADMIN) {
+        $_SESSION['admin'] = true;
+        header('location:products.php');
+        exit;
+    } else {
         $errors = [];
-        $errors['message'] = translate('WrongData');
-        $_SESSION['admin'] = false;
+        $errors['message'] = translate('Invalid');
     }
 }
 
@@ -36,10 +35,10 @@ if (isset($_POST['submit']) && $_POST['submit']) {
     <form method="POST">
         <div class="container">
             <h3><?= translate('Login'); ?></h3>
-            <input type="text" name="username" placeholder="Username">
+            <input type="text" name="username" placeholder="<?= translate('Username'); ?>">
             <br>
             <br>
-            <input type="password" name="password" placeholder="Password">
+            <input type="password" name="password" placeholder="<?= translate('Password'); ?>">
             <br>
             <br>
             <input type="submit" name="submit" value="<?= translate('BtnLogin'); ?>">

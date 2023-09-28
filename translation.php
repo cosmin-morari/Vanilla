@@ -29,6 +29,7 @@ $words = [
     "Order" => "View Order",
     "Orders" => "Orders",
     "OrdersEmpty" => "Not order",
+    "Password"=>"Password",
     "Pending" => "Pending",
     "Price" => "Price",
     "Product" => "Product",
@@ -40,7 +41,8 @@ $words = [
     "Status" => "Status",
     "Title" => "Title",
     "TotalPrice" => "Total Price",
+    "Username" => "Username",
     "ViewOrders" => "Go to orders",
-    "WrongData" => "Wrong data!",
+    "Invalid" => "Invalid credentials!",
     "YourOrder" => "This is your order!"
 ];
