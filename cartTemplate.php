@@ -55,7 +55,7 @@
                     <input type="submit" name="submit" value="<?= translate('Checkout'); ?>">
                 </form>
             <?php elseif (isset($tomail) && $tomail) : ?>
-                <h3>Checkout information:</h3>
+                <h3><?= translate('CheckoutInformation'); ?>:</h3>
                 <p><?= translate('Name'); ?>: <?= isset($_POST['name']) ? $_POST['name'] : ''; ?></p>
                 <p><?= translate('Email'); ?>: <?= isset($_POST['contactDetails']) ? $_POST['contactDetails'] : ''; ?></p>
                 <p><?= translate('Comments'); ?>: <?= isset($_POST['comments']) ? $_POST['comments'] : ''; ?></p>

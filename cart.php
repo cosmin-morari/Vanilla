@@ -118,6 +118,7 @@ if ($hasCartItems) {
 
                 $querySum = $stmt->get_result();
                 $rows = $querySum->fetch_assoc();
+
                 $totalPriceOrder  = $rows['SUM(price)'];
                 $date = date('d/m/Y');
                 $customerDetails = $name . ', ' . $contactDetails . ', ' . $comments;
@@ -128,6 +129,7 @@ if ($hasCartItems) {
                         $stmt->bind_param('sssi', $date, $customerDetails, $productsInOrder, $totalPriceOrder);
                     }
                 }
+
                 $stmt->execute();
                 array_splice($_SESSION['idProducts'], 0);
                 header('location:index.php');
@@ -144,3 +146,5 @@ $tomail = false;
 $confirmOrder = false;
 
 include 'cartTemplate.php';
+
+
