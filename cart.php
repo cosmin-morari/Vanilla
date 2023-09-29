@@ -137,12 +137,22 @@ if ($hasCartItems) {
                     $idOrder = $idOrderResult['max(id)'];
 
                     foreach ($idsFromSession as $idProductsTable) {
-                        $insertPivot = "INSERT INTO products_orders(product_id, order_id) VALUES (?, ?)";
-                        $stmt = $conn->prepare($insertPivot);
-                        if ($stmt) {
-                            $stmt->bind_param('ii', $idProductsTable , $idOrder);
-                        }
+                        $priceQuery = "SELECT price FROM products WHERE id = '$idProductsTable'";
+                        $stmt = $conn->prepare($priceQuery);
                         $stmt->execute();
+                        $priceProduct = $stmt->get_result()->fetch_assoc();
+                        $price = $priceProduct['price'];
+
+                        if ($priceProduct) {
+                            $insertPivot = "INSERT INTO products_orders(product_id, order_id, price) VALUES (?, ?, ?)";
+                            $stmt = $conn->prepare($insertPivot);
+
+                            if ($stmt) {
+                                $stmt->bind_param('iii', $idProductsTable, $idOrder, $price);
+                            }
+
+                            $stmt->execute();
+                        }
                     }
                 }
 
