@@ -17,11 +17,6 @@ if (isset($_POST['delete']) && $_POST['delete']) {
     exit;
 }
 
-if (isset($_POST['edit']) && $_POST['edit']) {
-    header('location: product.php?id=' . $_POST['id']);
-    exit;
-}
-
 if (isset($_POST['logout']) && $_POST['logout']) {
     $_SESSION['admin'] = false;
     header('location:login.php');
@@ -60,7 +55,8 @@ $conn->close();
                         <input type="hidden" name="id" value="<?= $row['id']; ?>">
                     </div>
                     <div class="buttons">
-                        <input type="submit" class="editProducts" name="edit" value="<?= translate('Edit'); ?>">
+                        <!-- <input type="submit" class="editProducts" name="edit" value=""> -->
+                        <a href="product.php?id=<?= $row['id']; ?>"> <?= translate('Edit'); ?></a>
                         <input type="submit" class="deleteProducts" name="delete" value="<?= translate('Delete'); ?>">
                     </div>
                 </form>

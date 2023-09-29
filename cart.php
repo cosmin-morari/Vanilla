@@ -128,9 +128,24 @@ if ($hasCartItems) {
                     if ($stmt) {
                         $stmt->bind_param('sssi', $date, $customerDetails, $productsInOrder, $totalPriceOrder);
                     }
+                    $stmt->execute();
+
+                    $idOrderQuery = "SELECT max(id) FROM orders";
+                    $stmt = $conn->prepare($idOrderQuery);
+                    $stmt->execute();
+                    $idOrderResult = $stmt->get_result()->fetch_assoc();
+                    $idOrder = $idOrderResult['max(id)'];
+
+                    foreach ($idsFromSession as $idProductsTable) {
+                        $insertPivot = "INSERT INTO products_orders(product_id, order_id) VALUES (?, ?)";
+                        $stmt = $conn->prepare($insertPivot);
+                        if ($stmt) {
+                            $stmt->bind_param('ii', $idProductsTable , $idOrder);
+                        }
+                        $stmt->execute();
+                    }
                 }
 
-                $stmt->execute();
                 array_splice($_SESSION['idProducts'], 0);
                 header('location:index.php');
                 exit;
@@ -146,5 +161,3 @@ $tomail = false;
 $confirmOrder = false;
 
 include 'cartTemplate.php';
-
-
