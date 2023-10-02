@@ -18,6 +18,7 @@ CREATE TABLE products_orders (
   `id` int(11) NOT NULL,
   `product_id` int(11) DEFAULT NULL,
   `order_id` int(11) DEFAULT NULL,
+  `price` int(11) NOT NULL,
   FOREIGN KEY (`order_id`) REFERENCES `orders`(`id`),
   FOREIGN KEY (`product_id`) REFERENCES `products`(`id`)
 )
