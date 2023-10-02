@@ -16,7 +16,7 @@ if (!empty($_POST['id'])) {
     unset($_SESSION['idProducts'][$index]);
 }
 
-// data processing...
+// data processing
 $conn = connDataBase();
 $idsFromSession = [];
 if (isset($_SESSION['idProducts'])) {
@@ -118,10 +118,11 @@ if ($hasCartItems) {
 
                 $querySum = $stmt->get_result();
                 $rows = $querySum->fetch_assoc();
-
                 $totalPriceOrder  = $rows['SUM(price)'];
-                $date = date('d/m/Y');
+
+                $date = date('Y-m-d h-i-s');
                 $customerDetails = $name . ', ' . $contactDetails . ', ' . $comments;
+
                 if ($date && $customerDetails && $productsInOrder && $totalPriceOrder) {
                     $insertQuery = "INSERT INTO orders (date, customer_details, purchased_products, total_price) VALUES (?, ?, ?, ?)";
                     $stmt = $conn->prepare($insertQuery);

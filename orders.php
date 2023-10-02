@@ -6,62 +6,8 @@ $conn = connDataBase();
 $queryOrders = "SELECT * FROM orders";
 $results = $conn->query($queryOrders);
 
-if (isset($_POST['viewOrder']) && $_POST['viewOrder']) {
-    if (isset($_POST['idOrder']) && $_POST['idOrder']) {
-        header('location: order.php?idOrder=' . $_POST['idOrder']);
-        exit;
-    }
-}
-
-//PHP MAILER
-
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
-use PHPMailer\PHPMailer\Exception;
-
-require './vendor/autoload.php';
-
-if (isset($_POST['confirmOrder']) && $_POST['confirmOrder']) {
-    if (isset($_POST['idOrder']) && $_POST['idOrder']) {
-        $id = $_POST['idOrder'];
-        if (isset($_POST['email']) && $_POST['email']) {
-            $email = $_POST['email'];
-            $query = "SELECT * FROM orders WHERE id IN (?)";
-            $stmt = $conn->prepare($query);
-            if ($stmt) {
-                $stmt->bind_param('s', $id);
-            }
-            $stmt->execute();
-            $result = $stmt->get_result();
-            include 'confirmEmail.php';
-            $confirmEmail = ob_get_clean();
-
-            try {
-                $phpmailer = new PHPMailer();
-                $phpmailer->isSMTP();
-                $phpmailer->Host = 'sandbox.smtp.mailtrap.io';
-                $phpmailer->SMTPAuth = true;
-                $phpmailer->Port = 2525;
-                $phpmailer->Username = '23472fefac2901';
-                $phpmailer->Password = 'a2190e69e3bc07';
-
-                //Recipients
-                $phpmailer->setFrom($email, 'Client');
-                $phpmailer->addAddress(MAIL, 'Admin');
-
-                //Content
-                $phpmailer->isHTML(true);
-                $phpmailer->Subject = 'Your order!';
-                $phpmailer->Body = $confirmEmail;
-                $phpmailer->send();
-            } catch (Exception $e) {
-                echo "Message could not be sent. Mailer Error: {$phpmailer->ErrorInfo}";
-            }
-        }
-    }
-}
-
 $conn->close();
+
 ?>
 
 <!DOCTYPE html>
@@ -100,7 +46,7 @@ $conn->close();
                             <td>
                                 <form method="POST">
                                     <input type="hidden" name="idOrder" value="<?= $row['id'] ?>">
-                                    <input type="submit" name="viewOrder" value="<?= translate('Order') ?>">
+                                    <a href="order.php?idOrder=<?= $row['id'];?>"><?= translate('Order'); ?></a>
                                 </form>
                             </td>
                         </tr>
