@@ -7,7 +7,6 @@ $queryOrders = "SELECT * FROM orders";
 $results = $conn->query($queryOrders);
 
 $conn->close();
-
 ?>
 
 <!DOCTYPE html>

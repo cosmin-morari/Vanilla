@@ -17,7 +17,12 @@ while ($row = $idsOrders->fetch_assoc()) {
 }
 
 if (in_array($idOrder, $idInOrderTable)) {
-    $querySelectAllOrder = "SELECT * FROM orders WHERE id IN(?)";
+    $querySelectAllOrder = "SELECT 
+                            *
+                            FROM products_orders
+                            JOIN orders ON products_orders.order_id = orders.id
+                            JOIN products ON products_orders.product_id = products.id
+                            WHERE order_id IN (?)";
     $stmt = $conn->prepare($querySelectAllOrder);
 
     if ($stmt) {
@@ -32,6 +37,7 @@ if (in_array($idOrder, $idInOrderTable)) {
 }
 
 $conn->close();
+
 ?>
 
 <!DOCTYPE html>
@@ -56,11 +62,10 @@ $conn->close();
                     <th><?= translate('Status'); ?></th>
                 </tr>
             <tbody>
-                <?php while ($row = $result->fetch_assoc()) : ?>
-                    <td><?= $row['customer_details']; ?></td>
-                    <td><?= $row['purchased_products']; ?></td>
-                    <td><?= translate('Pending'); ?></td>
-                <?php endwhile; ?>
+                <?php $row = $result->fetch_assoc() ?>
+                <td><?= $row['customer_details']; ?></td>
+                <td><?= $row['purchased_products']; ?></td>
+                <td><?= translate('Pending'); ?></td>
             </tbody>
             </thead>
         </table>
