@@ -52,13 +52,15 @@ if (isset($_POST['save'])  && isset($_FILES['image'])) {
             if (in_array($imageExtension, $allowedExtensions)) {
                 $updateQuery = "UPDATE products SET title = ?, description = ?, price = ?, imageSource = ? WHERE id = ?";
                 $stmt = $conn->prepare($updateQuery);
+
                 if ($stmt) {
                     $stmt->bind_param('ssisi', $title, $description, $price, $newImageName, $editId);
                 }
+
                 $stmt->execute();
                 header('location:products.php');
                 exit;
-            } else {
+            } elseif (isset($_FILES['image']) && !in_array($imageExtension, $allowedExtensions)) {
                 $errors['message'] = translate('ImageErr');
             }
         }
