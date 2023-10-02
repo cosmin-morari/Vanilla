@@ -3,10 +3,21 @@ require_once('common.php');
 session_start();
 $conn = connDataBase();
 
-$queryOrders = "SELECT * FROM orders";
+$queryOrders = "SELECT
+                DISTINCT order_id,
+                orders.id,
+                date,
+                customer_details,
+                purchased_products,
+                SUM(products_orders.price) as total_price
+                FROM products_orders
+                JOIN orders ON orders.id = products_orders.order_id
+                GROUP BY orders.id
+                ";
 $results = $conn->query($queryOrders);
 
 $conn->close();
+
 ?>
 
 <!DOCTYPE html>
@@ -45,7 +56,7 @@ $conn->close();
                             <td>
                                 <form method="POST">
                                     <input type="hidden" name="idOrder" value="<?= $row['id'] ?>">
-                                    <a href="order.php?idOrder=<?= $row['id'];?>"><?= translate('Order'); ?></a>
+                                    <a href="order.php?idOrder=<?= $row['id']; ?>"><?= translate('Order'); ?></a>
                                 </form>
                             </td>
                         </tr>
