@@ -4,16 +4,8 @@ require_once('common.php');
 checkAdmin();
 
 $conn = connDataBase();
-$selectAllProducts = "SELECT * FROM products WHERE id = ?";
+
 $editId = (isset($_GET['id']) && $_GET['id']) ? $_GET['id'] : '';
-$stmt = $conn->prepare($selectAllProducts);
-
-if ($stmt) {
-    $stmt->bind_param('i', $editId);
-}
-
-$stmt->execute();
-$result = $stmt->get_result();
 
 if (!isset($_GET['id'])) {
     $destination = 'add';
@@ -48,7 +40,7 @@ if (isset($_POST['save'])  && isset($_FILES['image'])) {
                 header('location:products.php');
                 exit;
             } else {
-                $errors['message'] = translate('Image');
+                $errors['message'] = translate('ImageErr');
             }
         } else {
             $errors['message'] = translate('Required');
@@ -67,11 +59,21 @@ if (isset($_POST['save'])  && isset($_FILES['image'])) {
                 header('location:products.php');
                 exit;
             } else {
-                $errors['message'] = translate('Image');
+                $errors['message'] = translate('ImageErr');
             }
         }
     }
 }
+
+$selectAllProducts = "SELECT * FROM products WHERE id = ?";
+$stmt = $conn->prepare($selectAllProducts);
+
+if ($stmt) {
+    $stmt->bind_param('i', $editId);
+}
+
+$stmt->execute();
+$result = $stmt->get_result();
 
 $conn->close();
 ?>
