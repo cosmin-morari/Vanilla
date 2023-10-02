@@ -4,8 +4,7 @@ session_start();
 $conn = connDataBase();
 
 $queryOrders = "SELECT
-                DISTINCT order_id,
-                orders.id,
+                order_id,
                 date,
                 customer_details,
                 purchased_products,
@@ -48,15 +47,15 @@ $conn->close();
                 <tbody>
                     <?php while ($row = $results->fetch_assoc()) : ?>
                         <tr>
-                            <td><?= $row['id'] ?></td>
+                            <td><?= $row['order_id'] ?></td>
                             <td><?= $row['date'] ?></td>
                             <td><?= $row['customer_details'] ?></td>
                             <td><?= $row['purchased_products'] ?></td>
                             <td><?= $row['total_price'] ?></td>
                             <td>
                                 <form method="POST">
-                                    <input type="hidden" name="idOrder" value="<?= $row['id'] ?>">
-                                    <a href="order.php?idOrder=<?= $row['id']; ?>"><?= translate('Order'); ?></a>
+                                    <input type="hidden" name="idOrder" value="<?= $row['order_id'] ?>">
+                                    <a href="order.php?idOrder=<?= $row['order_id']; ?>"><?= translate('Order'); ?></a>
                                 </form>
                             </td>
                         </tr>
