@@ -21,7 +21,6 @@ if (in_array($idOrder, $idInOrderTable)) {
                             *
                             FROM products_orders
                             JOIN orders ON products_orders.order_id = orders.id
-                            JOIN products ON products_orders.product_id = products.id
                             WHERE order_id IN (?)";
     $stmt = $conn->prepare($querySelectAllOrder);
 
