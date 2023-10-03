@@ -1,6 +1,7 @@
 <?php
 require_once('common.php');
 session_start();
+
 checkAdmin();
 $conn = connDataBase();
 

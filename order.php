@@ -1,5 +1,7 @@
 <?php
 require_once('common.php');
+session_start();
+checkAdmin();
 
 if ($_SERVER['REQUEST_METHOD'] === $_GET['idOrder']) {
     header('location:orders.php');
@@ -8,20 +10,16 @@ if ($_SERVER['REQUEST_METHOD'] === $_GET['idOrder']) {
 
 $conn = connDataBase();
 $idOrder = isset($_GET['idOrder']) && $_GET['idOrder'] ? $_GET['idOrder'] : '';
-$idInOrderTable = [];
 $querySelectIdOrders = "SELECT id FROM orders";
 $idsOrders = $conn->query($querySelectIdOrders);
-
-while ($row = $idsOrders->fetch_assoc()) {
-    $idInOrderTable[] = $row['id'];
-}
+$idInOrderTable = ($idsOrders) ? array_column($idsOrders->fetch_all(MYSQLI_ASSOC), 'id') : '';
 
 if (in_array($idOrder, $idInOrderTable)) {
     $querySelectAllOrder = "SELECT 
                             *
                             FROM products_orders
                             JOIN orders ON products_orders.order_id = orders.id
-                            WHERE order_id IN (?)";
+                            WHERE order_id = ?";
     $stmt = $conn->prepare($querySelectAllOrder);
 
     if ($stmt) {
@@ -29,14 +27,15 @@ if (in_array($idOrder, $idInOrderTable)) {
     }
 
     $stmt->execute();
-    $result = $stmt->get_result();
 } else {
     header('location:orders.php');
     exit;
 }
 
-$conn->close();
+$result = $stmt->get_result();
+$row = $result->fetch_assoc();
 
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -61,7 +60,6 @@ $conn->close();
                     <th><?= translate('Status'); ?></th>
                 </tr>
             <tbody>
-                <?php $row = $result->fetch_assoc() ?>
                 <td><?= $row['customer_details']; ?></td>
                 <td><?= $row['purchased_products']; ?></td>
                 <td><?= translate('Pending'); ?></td>
