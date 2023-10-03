@@ -5,7 +5,7 @@ session_start();
 checkAdmin();
 $conn = connDataBase();
 
-$queryOrders = "SELECT
+$queryOrders = 'SELECT
                 order_id,
                 date,
                 customer_details,
@@ -14,7 +14,7 @@ $queryOrders = "SELECT
                 FROM products_orders
                 JOIN orders ON orders.id = products_orders.order_id
                 GROUP BY orders.id
-                ";
+                ';
 $results = $conn->query($queryOrders);
 
 $conn->close();

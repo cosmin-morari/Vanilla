@@ -23,7 +23,7 @@ if (isset($_POST['logout']) && $_POST['logout']) {
     exit;
 }
 
-$selectAllProducts = "SELECT * FROM products";
+$selectAllProducts = 'SELECT * FROM products';
 $result = $conn->query($selectAllProducts);
 $conn->close();
 

@@ -15,11 +15,11 @@ $idsOrders = $conn->query($querySelectIdOrders);
 $idInOrderTable = ($idsOrders) ? array_column($idsOrders->fetch_all(MYSQLI_ASSOC), 'id') : '';
 
 if (in_array($idOrder, $idInOrderTable)) {
-    $querySelectAllOrder = "SELECT 
+    $querySelectAllOrder = 'SELECT 
                             *
                             FROM products_orders
                             JOIN orders ON products_orders.order_id = orders.id
-                            WHERE order_id = ?";
+                            WHERE order_id = ?';
     $stmt = $conn->prepare($querySelectAllOrder);
 
     if ($stmt) {

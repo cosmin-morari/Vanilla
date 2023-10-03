@@ -31,7 +31,7 @@ if (isset($_POST['save'])  && isset($_FILES['image'])) {
     if (!isset($_GET['id'])) {
         if ($title && $description && $price) {
             if (in_array($imageExtension, $allowedExtensions)) {
-                $insertQuery = "INSERT INTO products (title, description, price, imageSource) VALUES (?, ?, ?, ?)";
+                $insertQuery = 'INSERT INTO products (title, description, price, imageSource) VALUES (?, ?, ?, ?)';
                 $stmt = $conn->prepare($insertQuery);
                 if ($stmt) {
                     $stmt->bind_param('ssis', $title, $description, $price, $newImageName);
@@ -50,7 +50,7 @@ if (isset($_POST['save'])  && isset($_FILES['image'])) {
     if (isset($_GET['id']) && $_GET['id']) {
         if ($title || $description || $price) {
             if (in_array($imageExtension, $allowedExtensions)) {
-                $updateQuery = "UPDATE products SET title = ?, description = ?, price = ?, imageSource = ? WHERE id = ?";
+                $updateQuery = 'UPDATE products SET title = ?, description = ?, price = ?, imageSource = ? WHERE id = ?';
                 $stmt = $conn->prepare($updateQuery);
 
                 if ($stmt) {
@@ -67,7 +67,7 @@ if (isset($_POST['save'])  && isset($_FILES['image'])) {
     }
 }
 
-$selectAllProducts = "SELECT * FROM products WHERE id = ?";
+$selectAllProducts = 'SELECT * FROM products WHERE id = ?';
 $stmt = $conn->prepare($selectAllProducts);
 
 if ($stmt) {

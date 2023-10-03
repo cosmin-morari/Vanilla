@@ -14,7 +14,7 @@ $conn = connDataBase();
 $hasCartItems = isset($_SESSION['idProducts']) && $_SESSION['idProducts'];
 $letterTotal = str_repeat('i', count($idsFromSession));
 $totalQuestionMark = implode(', ', array_fill(0, count($idsFromSession), '?'));
-$selectAllProducts = $hasCartItems ? "SELECT * FROM products WHERE id NOT IN ($totalQuestionMark)" : "SELECT * FROM products";
+$selectAllProducts = $hasCartItems ? 'SELECT * FROM products WHERE id NOT IN ($totalQuestionMark)' : 'SELECT * FROM products';
 $stmt = $conn->prepare($selectAllProducts);
 
 if ($stmt && $hasCartItems) {
