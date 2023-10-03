@@ -7,7 +7,7 @@ $conn = connDataBase();
 
 if (isset($_POST['delete']) && $_POST['delete']) {
     $idProduct = $_POST['id'];
-    $deleteProduct = "DELETE FROM products WHERE id IN (?)";
+    $deleteProduct = 'DELETE FROM products WHERE id IN (?)';
     $stmt = $conn->prepare($deleteProduct);
     if ($stmt && $idProduct) {
         $stmt->bind_param('i', $idProduct);

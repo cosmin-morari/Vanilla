@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === $_GET['idOrder']) {
 
 $conn = connDataBase();
 $idOrder = isset($_GET['idOrder']) && $_GET['idOrder'] ? $_GET['idOrder'] : '';
-$querySelectIdOrders = "SELECT id FROM orders";
+$querySelectIdOrders = 'SELECT id FROM orders';
 $idsOrders = $conn->query($querySelectIdOrders);
 $idInOrderTable = ($idsOrders) ? array_column($idsOrders->fetch_all(MYSQLI_ASSOC), 'id') : '';
 

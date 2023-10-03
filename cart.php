@@ -30,7 +30,7 @@ $letterTotal = str_repeat('i', count($idsFromSession));
 $totalQuestionMark = implode(', ', array_fill(0, count($idsFromSession), '?'));
 
 if ($hasCartItems) {
-    $querySelectProducts = 'SELECT * FROM products WHERE id IN ($totalQuestionMark)';
+    $querySelectProducts = "SELECT * FROM products WHERE id IN ($totalQuestionMark)";
     $stmt = $conn->prepare($querySelectProducts);
     if ($stmt && $hasCartItems) {
         $stmt->bind_param($letterTotal, ...$idsFromSession);
@@ -38,6 +38,8 @@ if ($hasCartItems) {
 
     $stmt->execute();
     $result = $stmt->get_result();
+    
+
 
     $errors = [];
 
@@ -91,22 +93,17 @@ if ($hasCartItems) {
                     $phpmailer->Body = $cartMail;
                     $phpmailer->send();
                 }
-                // INSERT ORDERS
-                $querySelectProductsInCart = 'SELECT title FROM products WHERE id IN ($totalQuestionMark)';
-                $stmt = $conn->prepare($querySelectProductsInCart);
-                if ($stmt && $hasCartItems) {
-                    $stmt->bind_param($letterTotal, ...$idsFromSession);
-                }
-                $stmt->execute();
 
-                $products = $stmt->get_result();
+
                 $purchasedProducts = array();
-                while ($rows = $products->fetch_array()) {
+                mysqli_data_seek($result, 0);
+
+                while ($rows = $result->fetch_assoc()) {
                     $purchasedProducts[] = $rows['title'];
                 }
                 $productsInOrder = implode(', ', $purchasedProducts);
 
-                $querySumPrice = 'SELECT SUM(price) FROM products WHERE id IN ($totalQuestionMark)';
+                $querySumPrice = "SELECT SUM(price) FROM products WHERE id IN ($totalQuestionMark)";
                 $stmt = $conn->prepare($querySumPrice);
 
                 if ($stmt && $hasCartItems) {
@@ -122,10 +119,11 @@ if ($hasCartItems) {
                 $date = date('Y-m-d h-i-s');
                 $customerDetails = $name . ', ' . $contactDetails . ', ' . $comments;
 
+                // INSERT ORDERS
                 if ($date && $customerDetails && $productsInOrder && $totalPriceOrder) {
                     $insertQuery = 'INSERT INTO orders (date, customer_details, purchased_products, total_price) VALUES (?, ?, ?, ?)';
                     $stmt = $conn->prepare($insertQuery);
-                    
+
                     if ($stmt) {
                         $stmt->bind_param('sssi', $date, $customerDetails, $productsInOrder, $totalPriceOrder);
                     }
