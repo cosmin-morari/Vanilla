@@ -1,7 +1,6 @@
 <div class="container">
     <h3><?= translate('Product'); ?></h3>
     <?php if (isset($destination) && $destination === 'edit') : ?>
-        <?php $row = $result->fetch_assoc(); ?>
         <input type="text" name="title" placeholder="<?= translate('Title'); ?>" value="<?= isset($_POST['title']) ? $_POST['title'] : $row['title'] ?>">
         <br>
         <br>
