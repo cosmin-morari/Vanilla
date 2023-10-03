@@ -1,6 +1,7 @@
 <?php
 require_once('common.php');
 session_start();
+checkAdmin();
 $conn = connDataBase();
 
 $queryOrders = "SELECT
@@ -53,10 +54,7 @@ $conn->close();
                             <td><?= $row['purchased_products'] ?></td>
                             <td><?= $row['total_price'] ?></td>
                             <td>
-                                <form method="POST">
-                                    <input type="hidden" name="idOrder" value="<?= $row['order_id'] ?>">
-                                    <a href="order.php?idOrder=<?= $row['order_id']; ?>"><?= translate('Order'); ?></a>
-                                </form>
+                                <a href="order.php?idOrder=<?= $row['order_id']; ?>"><?= translate('Order'); ?></a>
                             </td>
                         </tr>
                     <?php endwhile; ?>
@@ -64,7 +62,7 @@ $conn->close();
             </table>
         <?php else : ?>
             <p style="text-align: center; color:red;font-weight:bolder"><?= translate('OrdersEmpty'); ?></p>
-        <?php endif ?>
+        <?php endif; ?>
         <a href="index.php"><?= translate('GoToIndex') ?></a>
     </div>
 </body>

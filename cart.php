@@ -30,7 +30,7 @@ $letterTotal = str_repeat('i', count($idsFromSession));
 $totalQuestionMark = implode(', ', array_fill(0, count($idsFromSession), '?'));
 
 if ($hasCartItems) {
-    $querySelectProducts = "SELECT * FROM products WHERE id IN ($totalQuestionMark)";
+    $querySelectProducts = 'SELECT * FROM products WHERE id IN ($totalQuestionMark)';
     $stmt = $conn->prepare($querySelectProducts);
     if ($stmt && $hasCartItems) {
         $stmt->bind_param($letterTotal, ...$idsFromSession);
@@ -91,9 +91,8 @@ if ($hasCartItems) {
                     $phpmailer->Body = $cartMail;
                     $phpmailer->send();
                 }
-
                 // INSERT ORDERS
-                $querySelectProductsInCart = "SELECT title FROM products WHERE id IN ($totalQuestionMark)";
+                $querySelectProductsInCart = 'SELECT title FROM products WHERE id IN ($totalQuestionMark)';
                 $stmt = $conn->prepare($querySelectProductsInCart);
                 if ($stmt && $hasCartItems) {
                     $stmt->bind_param($letterTotal, ...$idsFromSession);
@@ -107,7 +106,7 @@ if ($hasCartItems) {
                 }
                 $productsInOrder = implode(', ', $purchasedProducts);
 
-                $querySumPrice = "SELECT SUM(price) FROM products WHERE id IN ($totalQuestionMark)";
+                $querySumPrice = 'SELECT SUM(price) FROM products WHERE id IN ($totalQuestionMark)';
                 $stmt = $conn->prepare($querySumPrice);
 
                 if ($stmt && $hasCartItems) {
@@ -124,36 +123,27 @@ if ($hasCartItems) {
                 $customerDetails = $name . ', ' . $contactDetails . ', ' . $comments;
 
                 if ($date && $customerDetails && $productsInOrder && $totalPriceOrder) {
-                    $insertQuery = "INSERT INTO orders (date, customer_details, purchased_products, total_price) VALUES (?, ?, ?, ?)";
+                    $insertQuery = 'INSERT INTO orders (date, customer_details, purchased_products, total_price) VALUES (?, ?, ?, ?)';
                     $stmt = $conn->prepare($insertQuery);
+                    
                     if ($stmt) {
                         $stmt->bind_param('sssi', $date, $customerDetails, $productsInOrder, $totalPriceOrder);
                     }
+
                     $stmt->execute();
+                    $idForLastOrder = $stmt->insert_id;
 
-                    $idOrderQuery = "SELECT max(id) FROM orders";
-                    $stmt = $conn->prepare($idOrderQuery);
-                    $stmt->execute();
-                    $idOrderResult = $stmt->get_result()->fetch_assoc();
-                    $idOrder = $idOrderResult['max(id)'];
+                    mysqli_data_seek($result, 0);
 
-                    foreach ($idsFromSession as $idProductsTable) {
-                        $priceQuery = "SELECT price FROM products WHERE id = '$idProductsTable'";
-                        $stmt = $conn->prepare($priceQuery);
-                        $stmt->execute();
-                        $priceProduct = $stmt->get_result()->fetch_assoc();
-                        $price = $priceProduct['price'];
+                    while ($row = $result->fetch_assoc()) {
+                        $insertPivot = 'INSERT INTO products_orders(product_id, order_id, price) VALUES (?, ?, ?)';
+                        $stmt = $conn->prepare($insertPivot);
 
-                        if ($priceProduct) {
-                            $insertPivot = "INSERT INTO products_orders(product_id, order_id, price) VALUES (?, ?, ?)";
-                            $stmt = $conn->prepare($insertPivot);
-
-                            if ($stmt) {
-                                $stmt->bind_param('iii', $idProductsTable, $idOrder, $price);
-                            }
-
-                            $stmt->execute();
+                        if ($stmt) {
+                            $stmt->bind_param('iii', $row['id'], $idForLastOrder, $row['price']);
                         }
+
+                        $stmt->execute();
                     }
                 }
 
