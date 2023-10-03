@@ -24,6 +24,7 @@ $words = [
     "Image" => "Image",
     "ImageErr" => "Not selected or the file isn't image!",
     "Index" => "Index",
+    "IsConnected" => "You are already logged in.",
     "Login" => "Login",
     "Logout" => "Logout",
     "Name" => "Name",

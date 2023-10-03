@@ -67,7 +67,6 @@ $conn->close();
             </thead>
         </table>
         <a href="orders.php"><?= translate('ViewOrders') ?></a>
-
     </div>
 </body>
 

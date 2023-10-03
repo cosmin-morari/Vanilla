@@ -32,21 +32,26 @@ if (isset($_POST['submit']) && $_POST['submit']) {
 </head>
 
 <body>
-    <form method="POST">
-        <div class="container">
-            <h3><?= translate('Login'); ?></h3>
-            <input type="text" name="username" placeholder="<?= translate('Username'); ?>">
-            <br>
-            <br>
-            <input type="password" name="password" placeholder="<?= translate('Password'); ?>">
-            <br>
-            <br>
-            <input type="submit" name="submit" value="<?= translate('BtnLogin'); ?>">
-            <?php if (isset($errors)) : ?>
-                <p style="color:red;"><?= $errors['message']; ?></p>
-            <?php endif; ?>
-        </div>
-    </form>
+    <?php if (!$_SESSION['admin']) : ?>
+        <form method="POST">
+            <div class="container">
+                <h3><?= translate('Login'); ?></h3>
+                <input type="text" name="username" placeholder="<?= translate('Username'); ?>">
+                <br>
+                <br>
+                <input type="password" name="password" placeholder="<?= translate('Password'); ?>">
+                <br>
+                <br>
+                <input type="submit" name="submit" value="<?= translate('BtnLogin'); ?>">
+                <?php if (isset($errors)) : ?>
+                    <p style="color:red;"><?= $errors['message']; ?></p>
+                <?php endif; ?>
+            </div>
+        </form>
+        <?php else: ?>
+            <h1><?= translate('IsConnected'); ?></h1>
+            <a href="orders.php"><?= translate('ViewOrders') ?></a>
+    <?php endif; ?>
 </body>
 
 </html>
