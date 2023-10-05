@@ -24,17 +24,17 @@
             <p>We are processing your order. </p>
         <?php endif; ?>
         <?php if ($hasCartItems) : ?>
-            <?php while ($row = $result->fetch_assoc()) : ?>
+            <?php foreach ($productsArrayAssoc as $product) : ?>
                 <div class="content">
                     <form method="POST">
                         <div class="img">
-                            <img src="http://localhost/training/Vanilla/assets/photos/<?= $row['imageSource'] ?>" alt="img">
+                            <img src="http://localhost/training/Vanilla/assets/photos/<?= $product['imageSource'] ?>" alt="img">
                         </div>
                         <div class="details">
-                            <p><?= translate('Title'); ?>: <?= $row['title']; ?></p>
-                            <p><?= translate('Description'); ?>: <?= $row['description']; ?></p>
-                            <p><?= translate('Price'); ?>: <?= $row['price']; ?></p>
-                            <input type="hidden" name="id" value="<?= $row['id']; ?>">
+                            <p><?= translate('Title'); ?>: <?= $product['title']; ?></p>
+                            <p><?= translate('Description'); ?>: <?= $product['description']; ?></p>
+                            <p><?= translate('Price'); ?>: <?= $product['price']; ?></p>
+                            <input type="hidden" name="id" value="<?= $product['id']; ?>">
                         </div>
                         <?php if (isset($tomail) && !$tomail && !$confirmOrder) : ?>
                             <div>
@@ -43,7 +43,7 @@
                         <?php endif; ?>
                     </form>
                 </div>
-            <?php endwhile; ?>
+                <?php endforeach; ?>
             <?php if (isset($tomail) && !$tomail && isset($confirmOrder) && !$confirmOrder) : ?>
                 <form class="checkOut" method="POST">
                     <input type="text" name="name" placeholder="<?= translate('Name'); ?>" value="<?= isset($_POST['name']) ? $_POST['name'] : ''; ?>">

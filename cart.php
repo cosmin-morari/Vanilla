@@ -32,14 +32,15 @@ $totalQuestionMark = implode(', ', array_fill(0, count($idsFromSession), '?'));
 if ($hasCartItems) {
     $querySelectProducts = "SELECT * FROM products WHERE id IN ($totalQuestionMark)";
     $stmt = $conn->prepare($querySelectProducts);
+
     if ($stmt && $hasCartItems) {
         $stmt->bind_param($letterTotal, ...$idsFromSession);
     }
 
     $stmt->execute();
     $result = $stmt->get_result();
-    
 
+    $productsArrayAssoc = $result->fetch_all(MYSQLI_ASSOC);
 
     $errors = [];
 
@@ -58,8 +59,8 @@ if ($hasCartItems) {
                 $phpmailer->Host = 'sandbox.smtp.mailtrap.io';
                 $phpmailer->SMTPAuth = true;
                 $phpmailer->Port = 2525;
-                $phpmailer->Username = 'de1f82dd0e1204';
-                $phpmailer->Password = 'fc648a2f712110';
+                $phpmailer->Username = 'ea780c5a887ef7';
+                $phpmailer->Password = '474627f809f406';
 
                 //Recipients
                 $phpmailer->setFrom($contactDetails, $name);
@@ -82,7 +83,6 @@ if ($hasCartItems) {
                     $tomail = false;
                     $phpmailer->ClearAllRecipients();
                     $phpmailer->ClearAddresses();
-                    mysqli_data_seek($result, 0);
                     ob_start();
                     include 'cartTemplate.php';
                     $cartMail = ob_get_clean();
@@ -94,27 +94,15 @@ if ($hasCartItems) {
                     $phpmailer->send();
                 }
 
+                $purchasedProducts = [];
 
-                $purchasedProducts = array();
-                mysqli_data_seek($result, 0);
-
-                while ($rows = $result->fetch_assoc()) {
-                    $purchasedProducts[] = $rows['title'];
+                foreach ($productsArrayAssoc as $product) {
+                    $purchasedProducts[] = $product['title'];
+                    $productsInOrder = implode(', ', $purchasedProducts);
+                    $totalPriceOrder = array_reduce($productsArrayAssoc, function ($acc, $product) {
+                        return $acc + $product['price'];
+                    }, 0);
                 }
-                $productsInOrder = implode(', ', $purchasedProducts);
-
-                $querySumPrice = "SELECT SUM(price) FROM products WHERE id IN ($totalQuestionMark)";
-                $stmt = $conn->prepare($querySumPrice);
-
-                if ($stmt && $hasCartItems) {
-                    $stmt->bind_param($letterTotal, ...$idsFromSession);
-                }
-
-                $stmt->execute();
-
-                $querySum = $stmt->get_result();
-                $rows = $querySum->fetch_assoc();
-                $totalPriceOrder  = $rows['SUM(price)'];
 
                 $date = date('Y-m-d h-i-s');
                 $customerDetails = $name . ', ' . $contactDetails . ', ' . $comments;
@@ -131,18 +119,46 @@ if ($hasCartItems) {
                     $stmt->execute();
                     $idForLastOrder = $stmt->insert_id;
 
-                    mysqli_data_seek($result, 0);
-
-                    while ($row = $result->fetch_assoc()) {
-                        $insertPivot = 'INSERT INTO products_orders(product_id, order_id, price) VALUES (?, ?, ?)';
-                        $stmt = $conn->prepare($insertPivot);
-
-                        if ($stmt) {
-                            $stmt->bind_param('iii', $row['id'], $idForLastOrder, $row['price']);
-                        }
-
-                        $stmt->execute();
+                    $insertValues = [];
+                    foreach ($productsArrayAssoc as $product) {
+                        $insertValues[] = [$product['id'], $idForLastOrder, $product['price']];
                     }
+                    function getTypes($output, $value)
+                    {
+                        foreach ($value as $data) {
+                            if (is_float($data)) {
+                                $output['type'][] = "d";
+                            } elseif (is_integer($data)) {
+                                $output['type'][] = "i";
+                            } elseif (is_string($data)) {
+                                $output['type'][] = "s";
+                            } else {
+                                $output['type'][] = "b";
+                            }
+                            $output['values'][] = $data;
+                        }
+                        $query = [];
+
+                        for ($i = 0; $i < count($value); $i++) {
+                            $query[] = '?';
+                        }
+                        $output['query'][] = '(' . implode(',', $query) . ')';
+
+                        return $output;
+                    }
+
+                    $preparedData = array_reduce($insertValues, "getTypes");
+
+                    $insertPivot = 'INSERT INTO products_orders(product_id, order_id, price) VALUES';
+                    $insertPivot .= implode(',', $preparedData['query']);
+
+                    $stmt = $conn->prepare($insertPivot);
+                    $bindTypes = implode('', $preparedData['type']);
+
+                    if ($stmt) {
+                        $stmt->bind_param($bindTypes, ...$preparedData['values']);
+                    }
+                    $stmt->execute();
                 }
 
                 array_splice($_SESSION['idProducts'], 0);
